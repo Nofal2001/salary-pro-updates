@@ -27,26 +27,8 @@ jobs:
       - name: Build macOS .app
         run: flutter build macos --release
 
-      - name: Compress .app into zip
-        run: |
-          cd build/macos/Build/Products/Release
-          zip -r gsmanger-macos.zip gsmanger.app
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: v1.0.0
-          name: "GSManager macOS Release"
-          body: "This is the macOS version of GSManager."
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload .zip to Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: v1.0.0
-          files: build/macos/Build/Products/Release/gsmanger-macos.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: gsmanger-macos-app
+          path: build/macos/Build/Products/Release/gsmanger.app
