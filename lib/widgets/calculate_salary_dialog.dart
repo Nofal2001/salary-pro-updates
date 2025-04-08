@@ -96,10 +96,9 @@ class _CalculateSalaryDialogState extends State<CalculateSalaryDialog> {
 
     final advanceResults = await db.query(
       'advance_payments',
-      where:
-          lastSalaryTimestamp != null
-              ? 'workerName = ? AND timestamp > ?'
-              : 'workerName = ?',
+      where: lastSalaryTimestamp != null
+          ? 'workerName = ? AND timestamp > ?'
+          : 'workerName = ?',
       whereArgs:
           lastSalaryTimestamp != null ? [name, lastSalaryTimestamp] : [name],
     );
@@ -144,8 +143,7 @@ class _CalculateSalaryDialogState extends State<CalculateSalaryDialog> {
     dailyWage = salary / 30;
     overtimePay = (dailyWage / 8) * overtime;
 
-    totalSalary =
-        (dailyWage * (30 - absent)) +
+    totalSalary = (dailyWage * (30 - absent)) +
         overtimePay +
         bonus +
         profitShare +
@@ -158,15 +156,16 @@ class _CalculateSalaryDialogState extends State<CalculateSalaryDialog> {
   }
 
   InputDecoration _input(String label) => InputDecoration(
-    labelText: label,
-    filled: true,
-    fillColor: AppTheme.bgColor,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide.none,
-    ),
-  );
+        labelText: label,
+        filled: true,
+        fillColor: AppTheme.bgColor,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -183,15 +182,14 @@ class _CalculateSalaryDialogState extends State<CalculateSalaryDialog> {
           const SizedBox(height: 10),
           DropdownButtonFormField<String>(
             value: selectedWorkerName,
-            items:
-                workers
-                    .map(
-                      (worker) => DropdownMenuItem<String>(
-                        value: worker['name'],
-                        child: Text(worker['name']),
-                      ),
-                    )
-                    .toList(),
+            items: workers
+                .map(
+                  (worker) => DropdownMenuItem<String>(
+                    value: worker['name'],
+                    child: Text(worker['name']),
+                  ),
+                )
+                .toList(),
             onChanged: (value) {
               final worker = workers.firstWhere((w) => w['name'] == value);
               setState(() {
@@ -249,13 +247,11 @@ class _CalculateSalaryDialogState extends State<CalculateSalaryDialog> {
           const SizedBox(height: 10),
           DropdownButtonFormField<String>(
             value: selectedMonth,
-            items:
-                months
-                    .map(
-                      (month) =>
-                          DropdownMenuItem(value: month, child: Text(month)),
-                    )
-                    .toList(),
+            items: months
+                .map(
+                  (month) => DropdownMenuItem(value: month, child: Text(month)),
+                )
+                .toList(),
             onChanged: (value) => setState(() => selectedMonth = value!),
             decoration: _input('Month'),
           ),
@@ -339,11 +335,21 @@ class _CalculateSalaryDialogState extends State<CalculateSalaryDialog> {
                   );
 
                   if (exists) {
-                    setState(() {
-                      _statusText =
-                          "⚠ Salary already paid to $selectedWorkerName for $selectedMonth.";
-                      _statusColor = Colors.red;
-                    });
+                    await showDialog(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: const Text("⚠️ Salary Already Paid"),
+                        content: Text(
+                          "Salary already paid to $selectedWorkerName for $selectedMonth.",
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("OK"),
+                          ),
+                        ],
+                      ),
+                    );
                     return;
                   }
 
@@ -391,11 +397,6 @@ class _CalculateSalaryDialogState extends State<CalculateSalaryDialog> {
               ),
             ],
           ),
-          if (_statusText != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text(_statusText!, style: TextStyle(color: _statusColor)),
-            ),
         ],
       ),
     );
@@ -403,9 +404,9 @@ class _CalculateSalaryDialogState extends State<CalculateSalaryDialog> {
     return widget.embed
         ? content
         : Dialog(
-          insetPadding: const EdgeInsets.all(40),
-          backgroundColor: AppTheme.bgColor,
-          child: content,
-        );
+            insetPadding: const EdgeInsets.all(40),
+            backgroundColor: AppTheme.bgColor,
+            child: content,
+          );
   }
 }
