@@ -95,7 +95,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _checkForUpdates() async {
     const versionUrl =
-        'https://raw.githubusercontent.com/Nofal2001/salary_app/main/version.json';
+        'https://raw.githubusercontent.com/Nofal2001/salary-pro-updates/main/version.json';
 
     try {
       final response = await http.get(Uri.parse(versionUrl));
